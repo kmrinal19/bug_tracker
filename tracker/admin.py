@@ -1,8 +1,9 @@
 from django.contrib import admin
+from django.contrib.auth.admin import UserAdmin
 
-# Register your models here.
 from .models import *
 
+admin.site.register(User, UserAdmin)
 admin.site.register(Comment)
 admin.site.register(Tag)
 admin.site.register(Project)
