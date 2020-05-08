@@ -1,7 +1,14 @@
 from tracker.models import *
 from rest_framework import serializers
 
+class CommentSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Comment
+        fields = ['id', 'user', 'commentBody', 'commented_on',
+            'issue']
+
 class IssueSerializer(serializers.ModelSerializer):
+    issueComments = CommentSerializer(many = True, read_only = True)
     class Meta:
         model = Issue
         fields = ['id', 'heading', 'description',
@@ -11,18 +18,13 @@ class IssueSerializer(serializers.ModelSerializer):
             'issue_type']
 
 class ProjectSerializer(serializers.ModelSerializer):
+    projectIssues = IssueSerializer(many = True, read_only = True)
     class Meta:
         model = Project
         fields = ['id', 'name', 'wiki', 
             'created_on', 'created_by', 
             'team_member', 'subscriber', 
             'projectIssues']
-
-class CommentSerializer(serializers.ModelSerializer):
-    class Meta:
-        model = Comment
-        fields = ['id', 'user', 'commentBody', 'commented_on',
-            'issue']
 
 class UserSerializer(serializers.ModelSerializer):
     class Meta:
