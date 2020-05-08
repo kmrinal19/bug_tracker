@@ -25,11 +25,7 @@ class HasIssuePermission(permissions.BasePermission):
         if request.method in permissions.SAFE_METHODS:
             return True
 
-        if request.user == obj.created_by:
-            if request.method == 'DELETE':
-                return True
-
-        if (request.user.is_superuser) or (request.user in obj.project.team_member.all()):
+        if (request.user.is_superuser) or (request.user == obj.created_by) or (request.user in obj.project.team_member.all()):
             return True
 
         return False
