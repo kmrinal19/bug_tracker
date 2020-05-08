@@ -12,9 +12,9 @@ class IssueSerializer(serializers.ModelSerializer):
     class Meta:
         model = Issue
         fields = ['id', 'heading', 'description',
-            'created_by', 'created_on', 'assigned', 
+            'created_by', 'created_on', 'assigned_to', 
             'subscriber', 'project', 'last_updated',
-            'status', 'tag_set', 'issueComments',
+            'status', 'tag', 'issueComments',
             'issue_type']
 
 class ProjectSerializer(serializers.ModelSerializer):
