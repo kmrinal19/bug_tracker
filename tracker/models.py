@@ -38,7 +38,7 @@ class Issue(models.Model):
     subscriber = models.ManyToManyField(User, related_name = 'issueSubscriber', blank = True)
     project = models.ForeignKey(Project, on_delete = models.CASCADE, related_name = 'projectIssues')
     issue_type = models.CharField(max_length = 20, default = 'bug')
-    tag = models.ManyToManyField(Tag, related_name = 'tasIssues')
+    tag = models.ManyToManyField(Tag, related_name = 'tagIssues')
 
     def __str__(self):
             return self.heading

@@ -4,27 +4,26 @@ from rest_framework import serializers
 class CommentSerializer(serializers.ModelSerializer):
     class Meta:
         model = Comment
-        fields = ['id', 'user', 'commentBody', 'commented_on',
-            'issue']
+        fields = '__all__'
 
 class IssueSerializer(serializers.ModelSerializer):
     issueComments = CommentSerializer(many = True, read_only = True)
     class Meta:
         model = Issue
-        fields = ['id', 'heading', 'description',
-            'created_by', 'created_on', 'assigned_to', 
-            'subscriber', 'project', 'last_updated',
-            'status', 'tag', 'issueComments',
-            'issue_type']
+        fields = '__all__'
+
+class IssueUpdateSerializer(serializers.ModelSerializer):
+    issueComments = CommentSerializer(many = True, read_only = True)
+    class Meta:
+        model = Issue
+        fields = '__all__'
+        read_only_fields = ['heading', 'description', 'created_by', 'project', ]
 
 class ProjectSerializer(serializers.ModelSerializer):
     projectIssues = IssueSerializer(many = True, read_only = True)
     class Meta:
         model = Project
-        fields = ['id', 'name', 'wiki', 
-            'created_on', 'created_by', 
-            'team_member', 'subscriber', 
-            'projectIssues']
+        fields = '__all__'
 
 class UserSerializer(serializers.ModelSerializer):
     class Meta:
@@ -33,4 +32,4 @@ class UserSerializer(serializers.ModelSerializer):
             'last_name', 'email', 'date_joined',
             'is_superuser', 'is_staff', 'is_active', 
             'last_login', 'teamMember_of', 'issue_created',
-            'issue_assigned', 'comments']
+            'assigned_issue', 'comments']
