@@ -12,7 +12,7 @@ class Project(models.Model):
     wiki = RichTextUploadingField(null = True, blank = True)
     created_on = models.DateTimeField(auto_now_add = True)
     created_by = models.ForeignKey(User, on_delete = models.SET_NULL, related_name = 'created', null = True)
-    team_member = models.ManyToManyField(User, related_name = 'teamMember_of')
+    team_member = models.ManyToManyField(User, related_name = 'teamMember_of', blank  = True)
     subscriber = models.ManyToManyField(User, related_name = 'projectSubscriber', blank = True)
 
     def __str__(self):
@@ -38,7 +38,7 @@ class Issue(models.Model):
     subscriber = models.ManyToManyField(User, related_name = 'issueSubscriber', blank = True)
     project = models.ForeignKey(Project, on_delete = models.CASCADE, related_name = 'projectIssues')
     issue_type = models.CharField(max_length = 20, default = 'bug')
-    tag = models.ManyToManyField(Tag, related_name = 'tagIssues')
+    tag = models.ManyToManyField(Tag, related_name = 'tagIssues', blank = True)
 
     def __str__(self):
             return self.heading
@@ -52,7 +52,7 @@ class Issue(models.Model):
     #     unique_together = ('assigned_to', 'issue',)
 
 class Comment(models.Model):
-    user = models.ForeignKey(User, on_delete = models.CASCADE, related_name = 'comments')
+    user = models.ForeignKey(User, on_delete = models.CASCADE, related_name = 'comments', null = True)
     commentBody = RichTextUploadingField()
     commented_on = models.DateTimeField(auto_now = True)
     issue = models.ForeignKey(Issue, on_delete = models.CASCADE, related_name = 'issueComments')
