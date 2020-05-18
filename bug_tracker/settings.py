@@ -41,9 +41,23 @@ INSTALLED_APPS = [
     'ckeditor',
     'ckeditor_uploader',
     'rest_framework',
+    'knox', # this feature is in test phase
+    'corsheaders', # remove this 
 ]
 
+REST_FRAMEWORK = {
+    'DEFAULT_AUTHENTICATION_CLASSES': ('knox.auth.TokenAuthentication',),
+}
+
+AUTHENTICATION_BACKENDS = [
+    'tracker.backends.AuthBackend',
+    'django.contrib.auth.backends.ModelBackend',
+]
+
+
 MIDDLEWARE = [
+    'corsheaders.middleware.CorsMiddleware', # remove this
+    'django.middleware.common.CommonMiddleware', # remove this
     'django.middleware.security.SecurityMiddleware',
     'django.contrib.sessions.middleware.SessionMiddleware',
     'django.middleware.common.CommonMiddleware',
@@ -51,6 +65,10 @@ MIDDLEWARE = [
     'django.contrib.auth.middleware.AuthenticationMiddleware',
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
+]
+
+CORS_ORIGIN_WHITELIST = [
+    'http://localhost:3000'
 ]
 
 ROOT_URLCONF = 'bug_tracker.urls'

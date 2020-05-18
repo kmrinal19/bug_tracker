@@ -5,7 +5,12 @@ from ckeditor_uploader.fields import RichTextUploadingField
 # Create your models here.
 
 class User(AbstractUser):
-    pass
+    first_name = None
+    last_name = None
+    userId = models.BigIntegerField(unique = True)
+    name = models.CharField(max_length = 180, blank = True)
+    phoneNumber = models.CharField(max_length = 15, blank = True)
+    enrollmentNumber = models.CharField(max_length = 10, blank = True)
 
 class Project(models.Model):
     name = models.CharField(max_length = 60, unique = True)

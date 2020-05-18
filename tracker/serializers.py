@@ -64,8 +64,55 @@ class ProjectSerializer(serializers.ModelSerializer):
 class UserSerializer(serializers.ModelSerializer):
     class Meta:
         model = User
-        fields = ['id','username', 'first_name',
-            'last_name', 'email', 'date_joined',
+        fields = ['id','username', 'name','phoneNumber',
+            'email', 'date_joined', 'enrollmentNumber',
             'is_superuser', 'is_staff', 'is_active', 
             'last_login', 'teamMember_of', 'issue_created',
-            'assigned_issue', 'comments']
+            'assigned_issue', 'comments', 'issueSubscriber',
+            'projectSubscriber', 'userId']
+
+class AuthSerializer(serializers.Serializer):
+    client_id = serializers.CharField(required = True)
+    client_secret = serializers.CharField(required = True)
+    grant_type = serializers.CharField(required = True)
+    redirect_url = serializers.CharField(required = True)
+    code = serializers.CharField(required = True)
+
+#######################################################################
+
+from django.contrib.auth import authenticate
+from django.utils.translation import gettext_lazy as _
+
+
+class AuthTokenSerializer(serializers.Serializer):
+    username = serializers.CharField(
+        label=_("Username"),
+        write_only=True
+    )
+    # password = serializers.CharField(
+    #     label=_("Password"),
+    #     style={'input_type': 'password'},
+    #     trim_whitespace=False,
+    #     write_only=True
+    # )
+    token = serializers.CharField(
+        label=_("Token"),
+        read_only=True
+    )
+
+    def validate(self, attrs):
+        username = attrs.get('username')
+
+        if username:
+            user = authenticate(request=self.context.get('request'),
+                                username=username)
+
+            if not user:
+                msg = _('Unable to log in with provided credentials.')
+                raise serializers.ValidationError(msg, code='authorization')
+        else:
+            msg = _('Must include "username"')
+            raise serializers.ValidationError(msg, code='authorization')
+
+        attrs['user'] = user
+        return attrs
