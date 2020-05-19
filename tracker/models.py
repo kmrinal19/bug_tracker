@@ -7,10 +7,17 @@ from ckeditor_uploader.fields import RichTextUploadingField
 class User(AbstractUser):
     first_name = None
     last_name = None
+    password = None
     userId = models.BigIntegerField(unique = True)
-    name = models.CharField(max_length = 180, blank = True)
+    name = models.CharField(max_length = 180)
     phoneNumber = models.CharField(max_length = 15, blank = True)
     enrollmentNumber = models.CharField(max_length = 10, blank = True)
+
+    USERNAME_FIELD = 'userId'
+    required_fields = ['name','userId']
+
+    def __str__(self):
+        return self.name
 
 class Project(models.Model):
     name = models.CharField(max_length = 60, unique = True)

@@ -4,8 +4,8 @@ from tracker.models import User
 
 class AuthBackend(BaseBackend):
 
-    def authenticate(self, request, username=None, password=None):
-        user = User.objects.get(username=username)
+    def authenticate(self, request, userId=None, password=None):
+        user = User.objects.get(userId=userId)
         return user
 
     def get_user(self, user_id):

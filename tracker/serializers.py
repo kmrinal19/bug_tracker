@@ -64,7 +64,7 @@ class ProjectSerializer(serializers.ModelSerializer):
 class UserSerializer(serializers.ModelSerializer):
     class Meta:
         model = User
-        fields = ['id','username', 'name','phoneNumber',
+        fields = ['id', 'name','phoneNumber','username',
             'email', 'date_joined', 'enrollmentNumber',
             'is_superuser', 'is_staff', 'is_active', 
             'last_login', 'teamMember_of', 'issue_created',
@@ -85,8 +85,8 @@ from django.utils.translation import gettext_lazy as _
 
 
 class AuthTokenSerializer(serializers.Serializer):
-    username = serializers.CharField(
-        label=_("Username"),
+    userId = serializers.CharField(
+        label=_("userId"),
         write_only=True
     )
     # password = serializers.CharField(
@@ -101,11 +101,11 @@ class AuthTokenSerializer(serializers.Serializer):
     )
 
     def validate(self, attrs):
-        username = attrs.get('username')
+        userId = attrs.get('userId')
 
-        if username:
+        if userId:
             user = authenticate(request=self.context.get('request'),
-                                username=username)
+                                userId = userId)
 
             if not user:
                 msg = _('Unable to log in with provided credentials.')
