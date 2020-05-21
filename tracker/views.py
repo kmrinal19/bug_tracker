@@ -14,7 +14,7 @@ from django.contrib.auth import login
 from rest_framework import permissions
 from knox.views import LoginView as KnoxLoginView
 
-from rest_framework.exceptions import ParseError
+from rest_framework.exceptions import ParseError, PermissionDenied
 
 class ProjectViewSet(viewsets.ModelViewSet):
     queryset = Project.objects.all()
@@ -87,38 +87,50 @@ class LoginView(KnoxLoginView):
 
             if data_response.status_code == 200:
                 data_response = data_response.json()
-                userId =  data_response['userId']
-                name = (data_response['person']['fullName']).strip()
-                email = data_response['contactInformation']['emailAddress']
-                phoneNumber = data_response['contactInformation']['primaryPhoneNumber']
-                enrollmentNumber = data_response['student']['enrolmentNumber']
-                try:
-                    username = name[:name.index(' ')]+'_'+str(userId)
-                except ValueError:
-                    username = name+'_'+str(userId)
-                try:
-                    requestUser = User.objects.get(userId = userId)
-                    serializer = AuthTokenSerializer(data={'userId': requestUser.userId})
-                    serializer.is_valid(raise_exception=True)
-                    user = serializer.validated_data['user']
-                    login(request, user)
-                    return super(LoginView, self).post(request, format=None)
-                    
+                isMaintainer = False
+                roles_array = data_response['person']['roles']
+                for role in roles_array:
+                    if role['role'] == 'Maintainer':
+                        isMaintainer = True
+                        break
+                
+                if isMaintainer:
+                    userId =  data_response['userId']
+                    name = (data_response['person']['fullName']).strip()
+                    email = data_response['contactInformation']['emailAddress']
+                    phoneNumber = data_response['contactInformation']['primaryPhoneNumber']
+                    enrollmentNumber = data_response['student']['enrolmentNumber']
+                    try:
+                        username = name[:name.index(' ')]+'_'+str(userId)
+                    except ValueError:
+                        username = name+'_'+str(userId)
+                    try:
+                        requestUser = User.objects.get(userId = userId)
+                        serializer = AuthTokenSerializer(data={'userId': requestUser.userId})
+                        serializer.is_valid(raise_exception=True)
+                        user = serializer.validated_data['user']
+                        login(request, user)
+                        return super(LoginView, self).post(request, format=None)
+                        
 
-                except User.DoesNotExist:
-                    requestUser = User(userId = userId,
-                        name = name,
-                        email = email,
-                        username = username,
-                        phoneNumber = phoneNumber,
-                        enrollmentNumber = enrollmentNumber,
-                        )
-                    requestUser.save()
-                    serializer = AuthTokenSerializer(data={'userId': requestUser.userId})
-                    serializer.is_valid(raise_exception=True)
-                    user = serializer.validated_data['user']
-                    login(request, user)
-                    return super(LoginView, self).post(request, format=None)
+                    except User.DoesNotExist:
+                        requestUser = User(userId = userId,
+                            name = name,
+                            email = email,
+                            username = username,
+                            phoneNumber = phoneNumber,
+                            enrollmentNumber = enrollmentNumber,
+                            )
+                        requestUser.save()
+                        serializer = AuthTokenSerializer(data={'userId': requestUser.userId})
+                        serializer.is_valid(raise_exception=True)
+                        user = serializer.validated_data['user']
+                        login(request, user)
+                        return super(LoginView, self).post(request, format=None)
+                    
+                    else:
+                        raise PermissionDenied
+
             else:
                 return Response(data_response)
         except KeyError:
