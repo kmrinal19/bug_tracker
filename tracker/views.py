@@ -9,11 +9,9 @@ from tracker.permissions import *
 from rest_framework.permissions import IsAuthenticated
 import requests
 from django.urls import reverse
-
 from django.contrib.auth import login
 from rest_framework import permissions
 from knox.views import LoginView as KnoxLoginView
-
 from rest_framework.exceptions import ParseError, PermissionDenied
 
 class ProjectViewSet(viewsets.ModelViewSet):

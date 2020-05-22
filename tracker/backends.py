@@ -3,6 +3,9 @@ from django.contrib.auth.backends import BaseBackend
 from tracker.models import User
 
 class AuthBackend(BaseBackend):
+    '''
+    This authentication backends logs in user without the use of password
+    '''
 
     def authenticate(self, request, userId=None, password=None):
         user = User.objects.get(userId=userId)

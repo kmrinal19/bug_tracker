@@ -2,8 +2,6 @@ from django.db import models
 from django.contrib.auth.models import AbstractUser
 from ckeditor_uploader.fields import RichTextUploadingField
 
-# Create your models here.
-
 class User(AbstractUser):
     first_name = None
     last_name = None
@@ -54,14 +52,6 @@ class Issue(models.Model):
 
     def __str__(self):
             return self.heading
-
-# class IssueAssignment(models.Model):
-#     assigned_to = models.ForeignKey(User, on_delete = models.CASCADE)
-#     issue = models.ForeignKey(Issue, on_delete = models.CASCADE)
-#     assigned_by = models.ForeignKey(User, on_delete = models.SET_NULL, null = True, related_name = 'issue_assigned_by')
-    
-    # class Meta:
-    #     unique_together = ('assigned_to', 'issue',)
 
 class Comment(models.Model):
     user = models.ForeignKey(User, on_delete = models.CASCADE, related_name = 'comments', null = True)
