@@ -40,6 +40,13 @@ class UserViewSet(viewsets.ModelViewSet):
     serializer_class = UserSerializer
     # permission_classes = [IsAuthenticated, ]
 
+class WhoAmIViewSet(viewsets.ModelViewSet):
+    serializer_class = UserSerializer
+    permission_classes = [IsAuthenticated, ReadOnly]
+
+    def get_queryset(self):
+        queryset = User.objects.filter(userId = self.request.user.userId)
+        return queryset
 
 #############################################################
 

@@ -44,3 +44,10 @@ class HasCommentPermission(permissions.BasePermission):
             return True
 
         return False
+
+class ReadOnly(permissions.BasePermission):
+    """
+    Custom permissions for readonly views
+    """
+    def has_permission(self, request, view):
+        return request.method in permissions.SAFE_METHODS
