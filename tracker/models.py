@@ -28,6 +28,9 @@ class Project(models.Model):
     def __str__(self):
         return self.name
 
+    def created_by_name(self):
+        return self.created_by.name
+
 class Tag(models.Model):
     tag_name = models.CharField(max_length = 20)
 

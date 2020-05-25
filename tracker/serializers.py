@@ -47,6 +47,7 @@ class IssueUpdateSerializer(serializers.ModelSerializer):
 
 class ProjectSerializer(serializers.ModelSerializer):
     projectIssues = IssueSerializer(many = True, read_only = True)
+    created_by_name = serializers.ReadOnlyField()
 
     def create(self, validated_data):
         validated_data['created_by'] = self.context['request'].user
