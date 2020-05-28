@@ -29,7 +29,14 @@ class Project(models.Model):
         return self.name
 
     def created_by_name(self):
-        return self.created_by.name
+        if(self.created_by):
+            return self.created_by.name
+
+    def team_member_name(self):
+        return (list(map(lambda x: x.name, self.team_member.all())))
+
+    def subscriber_name(self):
+        return (list(map(lambda x: x.name, self.subscriber.all())))
 
 class Tag(models.Model):
     tag_name = models.CharField(max_length = 20)
@@ -56,9 +63,28 @@ class Issue(models.Model):
     def __str__(self):
             return self.heading
 
+    def created_by_name(self):
+        if(self.created_by):
+            return self.created_by.name
+
+    def assigned_to_name(self):
+        return (list(map(lambda x: x.name, self.assigned_to.all())))
+
+    def subscriber_name(self):
+        return (list(map(lambda x: x.name, self.subscriber.all())))
+
+    def project_name(self):
+        return self.project.name
+
 class Comment(models.Model):
     user = models.ForeignKey(User, on_delete = models.CASCADE, related_name = 'comments', null = True)
     commentBody = RichTextUploadingField()
     commented_on = models.DateTimeField(auto_now = True)
     issue = models.ForeignKey(Issue, on_delete = models.CASCADE, related_name = 'issueComments')
 
+    def user_name(self):
+        return self.user.name
+
+class Media(models.Model):
+    media = models.ImageField(upload_to = 'upload_images')
+    project = models.ForeignKey(Project, on_delete=models.CASCADE, null = True, related_name='project_media')

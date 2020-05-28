@@ -48,6 +48,10 @@ class WhoAmIViewSet(viewsets.ModelViewSet):
         queryset = User.objects.filter(userId = self.request.user.userId)
         return queryset
 
+class MediaViewSet(viewsets.ModelViewSet):
+    queryset = Media.objects.all()
+    serializer_class = MediaSerializer
+
 #############################################################
 
 class AuthView(APIView):

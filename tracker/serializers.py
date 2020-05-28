@@ -1,7 +1,14 @@
 from tracker.models import *
 from rest_framework import serializers
 
+
+class MediaSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Media
+        fields = '__all__'
+
 class CommentSerializer(serializers.ModelSerializer):
+    user_name = serializers.ReadOnlyField()
 
     def create(self, validated_data):
         validated_data['user'] = self.context['request'].user
@@ -14,6 +21,10 @@ class CommentSerializer(serializers.ModelSerializer):
 
 class IssueSerializer(serializers.ModelSerializer):
     issueComments = CommentSerializer(many = True, read_only = True)
+    created_by_name = serializers.ReadOnlyField()
+    assigned_to_name = serializers.ReadOnlyField()
+    subscriber_name = serializers.ReadOnlyField()
+    project_name = serializers.ReadOnlyField()
 
     def create(self, validated_data):
         validated_data['created_by'] = self.context['request'].user
@@ -46,14 +57,31 @@ class IssueUpdateSerializer(serializers.ModelSerializer):
         read_only_fields = ['heading', 'description', 'created_by', 'project', 'subscriber']
 
 class ProjectSerializer(serializers.ModelSerializer):
+    project_media = MediaSerializer(many = True, read_only = True)
     projectIssues = IssueSerializer(many = True, read_only = True)
     created_by_name = serializers.ReadOnlyField()
+    team_member_name = serializers.ReadOnlyField()
+    subscriber_name = serializers.ReadOnlyField()
 
     def create(self, validated_data):
         validated_data['created_by'] = self.context['request'].user
 
         if self.context['request'].user not in validated_data['team_member']:
             validated_data['team_member'].append(self.context['request'].user)
+
+        images_data = self.context.get('view').request.FILES
+
+        if images_data:
+            project = Project.objects.create(
+                name = validated_data['name'],
+                wiki = validated_data['wiki'],
+                created_by = validated_data['created_by'],
+            )
+            project.team_member.set(validated_data['team_member'])
+            for image_data in images_data.values():
+                Media.objects.create(project = project, media = image_data)
+
+            return project
 
         return super().create(validated_data)
 
