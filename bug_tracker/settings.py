@@ -36,6 +36,7 @@ INSTALLED_APPS = [
     'ckeditor',
     'ckeditor_uploader',
     'rest_framework',
+    'channels',
     'knox',
     'corsheaders',
 ]
@@ -95,6 +96,15 @@ TEMPLATES = [
 ]
 
 WSGI_APPLICATION = 'bug_tracker.wsgi.application'
+ASGI_APPLICATION = "bug_tracker.routing.application"
+CHANNEL_LAYERS = {
+    'default': {
+        'BACKEND': 'channels_redis.core.RedisChannelLayer',
+        'CONFIG': {
+            "hosts": [('127.0.0.1', 6379)],
+        },
+    },
+}
 
 
 # Database
