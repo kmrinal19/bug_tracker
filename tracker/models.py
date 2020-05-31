@@ -85,6 +85,10 @@ class Comment(models.Model):
     def user_name(self):
         return self.user.name
 
-class Media(models.Model):
+class ProjectMedia(models.Model):
     media = models.ImageField(upload_to = 'upload_images')
     project = models.ForeignKey(Project, on_delete=models.CASCADE, null = True, related_name='project_media')
+
+class IssueMedia(models.Model):
+    media = models.ImageField(upload_to = 'upload_images')
+    issue = models.ForeignKey(Issue, on_delete=models.CASCADE, null = True, related_name='issue_media')

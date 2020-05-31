@@ -2,9 +2,14 @@ from tracker.models import *
 from rest_framework import serializers
 
 
-class MediaSerializer(serializers.ModelSerializer):
+class ProjectMediaSerializer(serializers.ModelSerializer):
     class Meta:
-        model = Media
+        model = ProjectMedia
+        fields = '__all__'
+
+class IssueMediaSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = IssueMedia
         fields = '__all__'
 
 class CommentSerializer(serializers.ModelSerializer):
@@ -30,10 +35,26 @@ class IssueSerializer(serializers.ModelSerializer):
         validated_data['created_by'] = self.context['request'].user
         team_member_list = validated_data['project'].team_member.all()
         if self.context['request'].user in team_member_list or self.context['request'].user.is_superuser:
-            return super().create(validated_data)
+            pass
         else:
             validated_data.pop('assigned_to', None)
-            return super().create(validated_data)
+
+        images_data = self.context.get('view').request.FILES
+
+        if images_data:
+            issue = Issue.objects.create(
+                heading = validated_data['heading'],
+                description = validated_data['description'],
+                created_by = validated_data['created_by'],
+                project = validated_data['project'],
+                issue_type = validated_data['issue_type']
+            )
+            for image_data in images_data.values():
+                IssueMedia.objects.create(issue = issue, media = image_data)
+
+            return issue
+
+        return super().create(validated_data)
 
     class Meta:
         model = Issue
@@ -57,7 +78,7 @@ class IssueUpdateSerializer(serializers.ModelSerializer):
         read_only_fields = ['heading', 'description', 'created_by', 'project', 'subscriber']
 
 class ProjectSerializer(serializers.ModelSerializer):
-    project_media = MediaSerializer(many = True, read_only = True)
+    project_media = ProjectMediaSerializer(many = True, read_only = True)
     projectIssues = IssueSerializer(many = True, read_only = True)
     created_by_name = serializers.ReadOnlyField()
     team_member_name = serializers.ReadOnlyField()
@@ -79,7 +100,7 @@ class ProjectSerializer(serializers.ModelSerializer):
             )
             project.team_member.set(validated_data['team_member'])
             for image_data in images_data.values():
-                Media.objects.create(project = project, media = image_data)
+                ProjectMedia.objects.create(project = project, media = image_data)
 
             return project
 

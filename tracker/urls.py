@@ -9,6 +9,7 @@ router.register(r'issue', views.IssueViewSet)
 router.register(r'comment', views.CommentViewSet)
 router.register(r'user', views.UserViewSet)
 router.register(r'media', views.MediaViewSet)
+router.register(r'issuemedia', views.IssueMediaViewSet)
 router.register(r'whoami', views.WhoAmIViewSet, basename='whoami')
 
 urlpatterns = [

@@ -49,8 +49,12 @@ class WhoAmIViewSet(viewsets.ModelViewSet):
         return queryset
 
 class MediaViewSet(viewsets.ModelViewSet):
-    queryset = Media.objects.all()
-    serializer_class = MediaSerializer
+    queryset = ProjectMedia.objects.all()
+    serializer_class = ProjectMediaSerializer
+
+class IssueMediaViewSet(viewsets.ModelViewSet):
+    queryset = IssueMedia.objects.all()
+    serializer_class = IssueMediaSerializer
 
 #############################################################
 
