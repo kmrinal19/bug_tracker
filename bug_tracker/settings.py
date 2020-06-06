@@ -39,6 +39,7 @@ INSTALLED_APPS = [
     'channels',
     'knox',
     'corsheaders',
+    'django_filters',
 ]
 
 REST_FRAMEWORK = {

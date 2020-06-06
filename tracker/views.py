@@ -13,11 +13,16 @@ from django.contrib.auth import login
 from rest_framework import permissions
 from knox.views import LoginView as KnoxLoginView
 from rest_framework.exceptions import ParseError, PermissionDenied
+from rest_framework import filters
 
 class ProjectViewSet(viewsets.ModelViewSet):
     queryset = Project.objects.all()
     serializer_class = ProjectSerializer
+    filter_backends = [filters.OrderingFilter]
    # permission_classes = [IsAuthenticated, HasProjectPermission]
+
+    ordering_fields = ['created_on']
+    ordering = ['-created_on']
 
 class IssueViewSet(viewsets.ModelViewSet):
     queryset = Issue.objects.all()
