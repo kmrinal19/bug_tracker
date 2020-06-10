@@ -37,6 +37,9 @@ class Project(models.Model):
 
     def subscriber_name(self):
         return (list(map(lambda x: x.name, self.subscriber.all())))
+    
+    class Meta:
+        ordering = ['-created_on']
 
 class Tag(models.Model):
     tag_name = models.CharField(max_length = 20)
@@ -75,6 +78,9 @@ class Issue(models.Model):
 
     def project_name(self):
         return self.project.name
+
+    class Meta:
+        ordering = ['-created_on']
 
 class Comment(models.Model):
     user = models.ForeignKey(User, on_delete = models.CASCADE, related_name = 'comments', null = True)
