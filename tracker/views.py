@@ -19,6 +19,12 @@ class ProjectViewSet(viewsets.ModelViewSet):
     serializer_class = ProjectSerializer
    # permission_classes = [IsAuthenticated, HasProjectPermission]
 
+    def get_serializer_class(self):
+        serializer_class = self.serializer_class
+        if self.request.method == 'PUT' or self.request.method == 'PATCH':
+            serializer_class = ProjectUpdateSerializer
+        return serializer_class
+
 class IssueViewSet(viewsets.ModelViewSet):
     queryset = Issue.objects.all()
     serializer_class = IssueSerializer
@@ -26,7 +32,7 @@ class IssueViewSet(viewsets.ModelViewSet):
 
     def get_serializer_class(self):
         serializer_class = self.serializer_class
-        if self.request.method == 'PUT':
+        if self.request.method == 'PUT' or self.request.method == 'PATCH':
             serializer_class = IssueUpdateSerializer
         return serializer_class
 
@@ -56,6 +62,10 @@ class IssueMediaViewSet(viewsets.ModelViewSet):
     queryset = IssueMedia.objects.all()
     serializer_class = IssueMediaSerializer
 
+class TagViewSet(viewsets.ModelViewSet):
+    queryset  = Tag.objects.all()
+    serializer_class = TagSerializer
+
 #############################################################
 
 class AuthView(APIView):
@@ -67,7 +77,7 @@ class AuthView(APIView):
                 self.client_id = '0ODR6pyyZcggO7YYkFHGssujPTaRPAKSuZCiCCln'
                 self.client_secret = '8e6QtbeqpTo7xFrqcvZuVB61fQ6EZOGHEbEqLyGfT4grDoMZLND7X4Yj1Vp8J662Vd4q2o2TyPCgTPMqPEn2T1YGq9PHotswVJZJGa8Ayvu18L5kjpEGqVG36LBrpRfL'
                 self.grant_type = 'authorization_code'
-                self.redirect_url = 'http://localhost:3000/auth/'
+                self.redirect_url = 'http://localhost:8000/tracker/api-auth/login/'
                 self.code = code
         auth_object = Auth(code)
         serializer = AuthSerializer(auth_object)

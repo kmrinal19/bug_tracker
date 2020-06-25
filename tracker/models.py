@@ -17,6 +17,15 @@ class User(AbstractUser):
     def __str__(self):
         return self.name
 
+    def teamMember_of_name(self):
+        return (list(map(lambda x: {'name':x.name, 'id':x.id}, self.teamMember_of.all())))
+
+    def issue_created_name(self):
+        return (list(map(lambda x: {'heading':x.heading, 'id':x.id}, self.issue_created.all())))
+
+    def assigned_issue_name(self):
+        return (list(map(lambda x: {'heading':x.heading, 'id':x.id}, self.assigned_issue.all())))
+
 class Project(models.Model):
     name = models.CharField(max_length = 60, unique = True)
     wiki = RichTextUploadingField(null = True, blank = True)
@@ -71,13 +80,16 @@ class Issue(models.Model):
             return self.created_by.name
 
     def assigned_to_name(self):
-        return (list(map(lambda x: x.name, self.assigned_to.all())))
+        return (list(map(lambda x: {'name':x.name, 'id':x.id}, self.assigned_to.all())))
 
     def subscriber_name(self):
         return (list(map(lambda x: x.name, self.subscriber.all())))
 
     def project_name(self):
         return self.project.name
+
+    def tag_name(self):
+        return (list(map(lambda x: x.tag_name, self.tag.all())))
 
     class Meta:
         ordering = ['-created_on']

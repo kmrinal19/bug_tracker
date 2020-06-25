@@ -25,11 +25,13 @@ class CommentSerializer(serializers.ModelSerializer):
         read_only_fields = ['user']
 
 class IssueSerializer(serializers.ModelSerializer):
+    issue_media = IssueMediaSerializer(many = True, read_only = True)
     issueComments = CommentSerializer(many = True, read_only = True)
     created_by_name = serializers.ReadOnlyField()
     assigned_to_name = serializers.ReadOnlyField()
     subscriber_name = serializers.ReadOnlyField()
     project_name = serializers.ReadOnlyField()
+    tag_name = serializers.ReadOnlyField()
 
     def create(self, validated_data):
         validated_data['created_by'] = self.context['request'].user
@@ -63,6 +65,8 @@ class IssueSerializer(serializers.ModelSerializer):
 
 class IssueUpdateSerializer(serializers.ModelSerializer):
     issueComments = CommentSerializer(many = True, read_only = True)  
+    assigned_to_name = serializers.ReadOnlyField()
+    tag_name = serializers.ReadOnlyField()
 
     def update(self, instance, validated_data):
         team_members_list = instance.project.team_member.all()
@@ -111,7 +115,25 @@ class ProjectSerializer(serializers.ModelSerializer):
         fields = '__all__'
         read_only_fields = ['subscriber', 'created_by']
 
+class ProjectUpdateSerializer(serializers.ModelSerializer):
+
+    def update(self, instance, validated_data):
+
+        images_data = self.context.get('view').request.FILES
+
+        if images_data:
+            for image_data in images_data.values():
+                ProjectMedia.objects.create(project = instance, media = image_data)
+
+        return super().update(instance, validated_data)
+
+    class Meta:
+        model = Project
+        fields = ['wiki','team_member','id']
+
 class UserSerializer(serializers.ModelSerializer):
+    teamMember_of_name = serializers.ReadOnlyField()
+
     class Meta:
         model = User
         fields = ['id', 'name','phoneNumber','username',
@@ -119,7 +141,13 @@ class UserSerializer(serializers.ModelSerializer):
             'is_superuser', 'is_staff', 'is_active', 
             'last_login', 'teamMember_of', 'issue_created',
             'assigned_issue', 'comments', 'issueSubscriber',
-            'projectSubscriber', 'userId']
+            'projectSubscriber', 'created','userId',
+            'teamMember_of_name', 'issue_created_name', 'assigned_issue_name']
+
+class TagSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Tag
+        fields = '__all__'
 
 class AuthSerializer(serializers.Serializer):
     client_id = serializers.CharField(required = True)
