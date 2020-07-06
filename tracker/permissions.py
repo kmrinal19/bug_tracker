@@ -45,6 +45,22 @@ class HasCommentPermission(permissions.BasePermission):
 
         return False
 
+class AdminEdit(permissions.BasePermission):
+
+    """
+    Custom permissions to allow only admins to edit objects
+    """
+
+    def has_object_permission(self, request, view, obj):
+        if request.method in permissions.SAFE_METHODS:
+            return True
+        
+        if (request.user.is_superuser) :
+            return True
+
+        return False
+
+
 class ReadOnly(permissions.BasePermission):
     """
     Custom permissions for readonly views

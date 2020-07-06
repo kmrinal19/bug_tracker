@@ -5,6 +5,8 @@ from channels.generic.websocket import WebsocketConsumer
 from knox.auth import TokenAuthentication
 from rest_framework import exceptions, HTTP_HEADER_ENCODING
 
+from django.core.mail import send_mail
+
 from tracker.models import Issue, Comment
 from tracker.serializers import CommentSerializer
 
@@ -58,3 +60,10 @@ class ChatConsumer(WebsocketConsumer):
 
         # Send message to WebSocket
         self.send(text_data=message)
+        send_mail(
+            'New Comment on Issue: '+self.issue.heading,
+            self.user.name+' commented on your issue: '+self.issue.heading,
+            'mrinalk.19kmr@gmail.com',
+            [self.issue.created_by.email],
+            fail_silently=False
+        )

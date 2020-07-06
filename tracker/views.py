@@ -44,7 +44,7 @@ class CommentViewSet(viewsets.ModelViewSet):
 class UserViewSet(viewsets.ModelViewSet):
     queryset = User.objects.all()
     serializer_class = UserSerializer
-    # permission_classes = [IsAuthenticated, ]
+   # permission_classes = [IsAuthenticated, AdminEdit ]
 
 class WhoAmIViewSet(viewsets.ModelViewSet):
     serializer_class = UserSerializer

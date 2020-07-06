@@ -1,5 +1,6 @@
 from tracker.models import *
 from rest_framework import serializers
+from django.core.mail import send_mail
 
 
 class ProjectMediaSerializer(serializers.ModelSerializer):
@@ -36,6 +37,15 @@ class IssueSerializer(serializers.ModelSerializer):
     def create(self, validated_data):
         validated_data['created_by'] = self.context['request'].user
         team_member_list = validated_data['project'].team_member.all()
+        project = validated_data['project']
+        email_list = list(map(lambda x: x.email,team_member_list))
+        send_mail(
+            'New Issue Reported',
+            self.context['request'].user.name+' reported a new issue in project : '+project.name,
+            'mrinalk.19km@gmail.com',
+            email_list,
+            fail_silently=False
+        )
         if self.context['request'].user in team_member_list or self.context['request'].user.is_superuser:
             pass
         else:
@@ -90,6 +100,15 @@ class ProjectSerializer(serializers.ModelSerializer):
 
     def create(self, validated_data):
         validated_data['created_by'] = self.context['request'].user
+        admins_email = list(map(lambda x: x.email, User.objects.filter(is_superuser = True))) 
+
+        send_mail(
+        'New Project created',
+        self.context['request'].user.name+' created a new project : '+validated_data['name'],
+        'mrinalk.19km@gmail.com',
+        admins_email,
+        fail_silently=False
+    )
 
         if self.context['request'].user not in validated_data['team_member']:
             validated_data['team_member'].append(self.context['request'].user)
