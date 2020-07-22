@@ -13,6 +13,7 @@ from django.contrib.auth import login
 from rest_framework import permissions
 from knox.views import LoginView as KnoxLoginView
 from rest_framework.exceptions import ParseError, PermissionDenied
+import environ
 
 class ProjectViewSet(viewsets.ModelViewSet):
     queryset = Project.objects.all()
@@ -74,8 +75,10 @@ class AuthView(APIView):
     def get(self, request, code, format=None):
         class Auth:
             def __init__(self, code):
-                self.client_id = '0ODR6pyyZcggO7YYkFHGssujPTaRPAKSuZCiCCln'
-                self.client_secret = '8e6QtbeqpTo7xFrqcvZuVB61fQ6EZOGHEbEqLyGfT4grDoMZLND7X4Yj1Vp8J662Vd4q2o2TyPCgTPMqPEn2T1YGq9PHotswVJZJGa8Ayvu18L5kjpEGqVG36LBrpRfL'
+                env = environ.Env()
+                environ.Env.read_env()
+                self.client_id = env("CLIENT_ID")
+                self.client_secret = env("CLIENT_SECRET")
                 self.grant_type = 'authorization_code'
                 self.redirect_url = 'http://localhost:8000/tracker/api-auth/login/'
                 self.code = code

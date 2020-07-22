@@ -6,17 +6,17 @@ Django settings for bug_tracker project.
 import os
 from datetime import timedelta
 from rest_framework.settings import api_settings
-from bug_tracker.credentials import email_id, email_password
+import environ
+
+env = environ.Env()
+environ.Env.read_env()
 
 # Build paths inside the project like this: os.path.join(BASE_DIR, ...)
 BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 
 
-# Quick-start development settings - unsuitable for production
-# See https://docs.djangoproject.com/en/3.0/howto/deployment/checklist/
-
 # SECURITY WARNING: keep the secret key used in production secret!
-SECRET_KEY = '26bnt)oecnqm&i!fu^+n&1w1=6gh6bid-ng+c$&6f86h@twv6!'
+SECRET_KEY = env("SECRET_KEY")
 
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
@@ -116,7 +116,7 @@ DATABASES = {
         'ENGINE': 'django.db.backends.mysql',
         'NAME': 'bugDB',
         'USER': 'pythonUser',
-        'PASSWORD': 'python'
+        'PASSWORD': env("DATABASE_PASSWORD")
     }
 }
 
@@ -159,8 +159,8 @@ USE_TZ = True
 EMAIL_BACKEND = 'django.core.mail.backends.smtp.EmailBackend'
 EMAIL_HOST = 'smtp.gmail.com'
 EMAIL_PORT = 587
-EMAIL_HOST_USER = email_id
-EMAIL_HOST_PASSWORD = email_password
+EMAIL_HOST_USER = env("EMAIL_ID")
+EMAIL_HOST_PASSWORD = env("EMAIL_PASSWORD")
 EMAIL_USE_TLS = True
 EMAIL_USE_SSL = False
 
