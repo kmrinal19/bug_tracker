@@ -30,10 +30,12 @@ source bug_tracker_env/bin/activate
 pip install -r requirements.txt
 ```
 
-- Navigate to /bug_tracker and create a file .env and store the following credentials inside it
+- Navigate to /bug_tracker and create a file .env and store the following credentials inside it  
+  (This app uses [Simple Mail Transfer Protocol](https://en.wikipedia.org/wiki/Simple_Mail_Transfer_Protocol) as communication protocol for electronic mail transmission)
 ```
 SECRET_KEY=your-secret-key
 
+DATABASE_USER=mysql-database-username
 DATABASE_PASSWORD=mysql-database-password
 
 EMAIL_ID=gmail-id-for-smtp

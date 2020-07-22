@@ -115,7 +115,7 @@ DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.mysql',
         'NAME': 'bugDB',
-        'USER': 'pythonUser',
+        'USER': env("DATABASE_USER"),
         'PASSWORD': env("DATABASE_PASSWORD")
     }
 }
