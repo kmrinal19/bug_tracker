@@ -1,6 +1,5 @@
 # Bug Tracker
-Bug Tracker is an app that aids in tracking bugs, issues, and questions in any app development. It provides a collaborative environment for the team to solve the issues related to the project. Currently only IMG members can sign in using omniport.
-
+Bug Tracker is an app that aids in tracking bugs, issues, and questions in any app development. It provides a collaborative environment for the team to solve the issues related to the project.
 <b>Built with</b>
 - [Django](https://www.djangoproject.com/)
 - [Django REST framework](https://www.django-rest-framework.org/)
