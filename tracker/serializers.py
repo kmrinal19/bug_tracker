@@ -1,6 +1,7 @@
 from tracker.models import *
 from rest_framework import serializers
 from django.core.mail import send_mail
+from bug_tracker.settings import EMAIL_HOST_USER
 
 
 class ProjectMediaSerializer(serializers.ModelSerializer):
@@ -42,7 +43,7 @@ class IssueSerializer(serializers.ModelSerializer):
         send_mail(
             'New Issue Reported',
             self.context['request'].user.name+' reported a new issue in project : '+project.name,
-            'mrinalk.19km@gmail.com',
+            EMAIL_HOST_USER,
             email_list,
             fail_silently=False
         )
@@ -105,7 +106,7 @@ class ProjectSerializer(serializers.ModelSerializer):
         send_mail(
         'New Project created',
         self.context['request'].user.name+' created a new project : '+validated_data['name'],
-        'mrinalk.19km@gmail.com',
+        EMAIL_HOST_USER,
         admins_email,
         fail_silently=False
     )
