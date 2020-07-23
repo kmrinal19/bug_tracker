@@ -47,7 +47,6 @@ CLIENT_SECRET=omniport-oauth-client-secret
 
 - Navigate back to the base directory for the app where <span>manage.py</span> file is located and make the database migrations using following command:
 ```
-python manage.py makemigrations
 python manage.py migrate
 ```
 
