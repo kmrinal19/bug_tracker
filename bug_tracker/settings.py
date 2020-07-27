@@ -115,8 +115,9 @@ DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.mysql',
         'NAME': 'bugDB',
-        'USER': env("DATABASE_USER"),
-        'PASSWORD': env("DATABASE_PASSWORD")
+        'USER': 'root',
+        'HOST' : 'db',
+        'PORT' : '3306',
     }
 }
 
