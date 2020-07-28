@@ -21,7 +21,7 @@ SECRET_KEY = env("SECRET_KEY")
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = []
+ALLOWED_HOSTS = ['localhost', 'db', 'web','127.0.0.1']
 
 
 # Application definition
@@ -116,7 +116,8 @@ DATABASES = {
         'ENGINE': 'django.db.backends.mysql',
         'NAME': 'bugDB',
         'USER': 'root',
-        'HOST' : 'db',
+        'PASSWORD': '',
+        'HOST': 'db',
         'PORT' : '3306',
     }
 }

@@ -2,8 +2,9 @@ version: '3'
 
 services: 
     db:
-        image: mysql/mysql-server:8.0
-        command: --default-authentication-plugin=mysql_native_password
+        container_name: bugDB
+        image: mysql:8.0
+        command: --default-authentication-plugin=mysql_native_password --mysqlx=0
 
         ports: 
             - '3306:3306'
@@ -11,6 +12,7 @@ services:
             - MYSQL_ALLOW_EMPTY_PASSWORD=true
             - MYSQL_DATABASE=bugDB
     web:
+        container_name: bugweb
         build: .
         command: python manage.py runserver 0.0.0.0:8000
         volumes:
