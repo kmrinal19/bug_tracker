@@ -1,112 +1,148 @@
+#!/usr/bin/python
+# -*- coding: utf-8 -*-
 from django.db import models
 from django.contrib.auth.models import AbstractUser
 from ckeditor_uploader.fields import RichTextUploadingField
 
+
 class User(AbstractUser):
+
     first_name = None
     last_name = None
     password = None
-    userId = models.BigIntegerField(unique = True)
-    name = models.CharField(max_length = 180)
-    phoneNumber = models.CharField(max_length = 15, blank = True)
-    enrollmentNumber = models.CharField(max_length = 10, blank = True)
+    userId = models.BigIntegerField(unique=True)
+    name = models.CharField(max_length=180)
+    phoneNumber = models.CharField(max_length=15, blank=True)
+    enrollmentNumber = models.CharField(max_length=10, blank=True)
 
     USERNAME_FIELD = 'userId'
-    required_fields = ['name','userId']
+    required_fields = ['name', 'userId']
 
     def __str__(self):
         return self.name
 
     def teamMember_of_name(self):
-        return (list(map(lambda x: {'name':x.name, 'id':x.id}, self.teamMember_of.all())))
+        return list(map(lambda x: {'name': x.name, 'id': x.id},
+                    self.teamMember_of.all()))
 
     def issue_created_name(self):
-        return (list(map(lambda x: {'heading':x.heading, 'id':x.id}, self.issue_created.all())))
+        return list(map(lambda x: {'heading': x.heading, 'id': x.id},
+                    self.issue_created.all()))
 
     def assigned_issue_name(self):
-        return (list(map(lambda x: {'heading':x.heading, 'id':x.id}, self.assigned_issue.all())))
+        return list(map(lambda x: {'heading': x.heading, 'id': x.id},
+                    self.assigned_issue.all()))
+
 
 class Project(models.Model):
-    name = models.CharField(max_length = 60, unique = True)
-    wiki = RichTextUploadingField(null = True, blank = True)
-    created_on = models.DateTimeField(auto_now_add = True)
-    created_by = models.ForeignKey(User, on_delete = models.SET_NULL, related_name = 'created', null = True)
-    team_member = models.ManyToManyField(User, related_name = 'teamMember_of', blank  = True)
-    subscriber = models.ManyToManyField(User, related_name = 'projectSubscriber', blank = True)
+
+    name = models.CharField(max_length=60, unique=True)
+    wiki = RichTextUploadingField(null=True, blank=True)
+    created_on = models.DateTimeField(auto_now_add=True)
+    created_by = models.ForeignKey(User, on_delete=models.SET_NULL,
+                                   related_name='created', null=True)
+    team_member = models.ManyToManyField(User,
+            related_name='teamMember_of', blank=True)
+    subscriber = models.ManyToManyField(User,
+            related_name='projectSubscriber', blank=True)
 
     def __str__(self):
         return self.name
 
     def created_by_name(self):
-        if(self.created_by):
+        if self.created_by:
             return self.created_by.name
 
     def team_member_name(self):
-        return (list(map(lambda x: x.name, self.team_member.all())))
+        return list(map(lambda x: x.name, self.team_member.all()))
 
     def subscriber_name(self):
-        return (list(map(lambda x: x.name, self.subscriber.all())))
-    
+        return list(map(lambda x: x.name, self.subscriber.all()))
+
     class Meta:
+
         ordering = ['-created_on']
 
+
 class Tag(models.Model):
-    tag_name = models.CharField(max_length = 20)
+
+    tag_name = models.CharField(max_length=20)
 
     def __str__(self):
-            return self.tag_name
+        return self.tag_name
+
 
 class Issue(models.Model):
+
     OPEN = 'O'
     CLOSED = 'C'
-    status_choices = [(OPEN,'Open'),(CLOSED,'Close')]
+    status_choices = [(OPEN, 'Open'), (CLOSED, 'Close')]
     heading = models.TextField()
-    description = RichTextUploadingField(null = True, blank = True)
-    created_on = models.DateTimeField(auto_now_add = True)
-    created_by = models.ForeignKey(User, on_delete = models.SET_NULL, related_name = 'issue_created', null = True)
-    last_updated = models.DateTimeField(auto_now = True)
-    status = models.CharField(max_length = 1,choices = status_choices, default = OPEN)
-    assigned_to = models.ManyToManyField(User, blank = True, related_name = 'assigned_issue')
-    subscriber = models.ManyToManyField(User, related_name = 'issueSubscriber', blank = True)
-    project = models.ForeignKey(Project, on_delete = models.CASCADE, related_name = 'projectIssues')
-    issue_type = models.CharField(max_length = 20, default = 'bug')
-    tag = models.ManyToManyField(Tag, related_name = 'tagIssues', blank = True)
+    description = RichTextUploadingField(null=True, blank=True)
+    created_on = models.DateTimeField(auto_now_add=True)
+    created_by = models.ForeignKey(User, on_delete=models.SET_NULL,
+                                   related_name='issue_created',
+                                   null=True)
+    last_updated = models.DateTimeField(auto_now=True)
+    status = models.CharField(max_length=1, choices=status_choices,
+                              default=OPEN)
+    assigned_to = models.ManyToManyField(User, blank=True,
+            related_name='assigned_issue')
+    subscriber = models.ManyToManyField(User,
+            related_name='issueSubscriber', blank=True)
+    project = models.ForeignKey(Project, on_delete=models.CASCADE,
+                                related_name='projectIssues')
+    issue_type = models.CharField(max_length=20, default='bug')
+    tag = models.ManyToManyField(Tag, related_name='tagIssues',
+                                 blank=True)
 
     def __str__(self):
-            return self.heading
+        return self.heading
 
     def created_by_name(self):
-        if(self.created_by):
+        if self.created_by:
             return self.created_by.name
 
     def assigned_to_name(self):
-        return (list(map(lambda x: {'name':x.name, 'id':x.id}, self.assigned_to.all())))
+        return list(map(lambda x: {'name': x.name, 'id': x.id},
+                    self.assigned_to.all()))
 
     def subscriber_name(self):
-        return (list(map(lambda x: x.name, self.subscriber.all())))
+        return list(map(lambda x: x.name, self.subscriber.all()))
 
     def project_name(self):
         return self.project.name
 
     def tag_name(self):
-        return (list(map(lambda x: x.tag_name, self.tag.all())))
+        return list(map(lambda x: x.tag_name, self.tag.all()))
 
     class Meta:
+
         ordering = ['-created_on']
 
+
 class Comment(models.Model):
-    user = models.ForeignKey(User, on_delete = models.CASCADE, related_name = 'comments', null = True)
+
+    user = models.ForeignKey(User, on_delete=models.CASCADE,
+                             related_name='comments', null=True)
     commentBody = RichTextUploadingField()
-    commented_on = models.DateTimeField(auto_now = True)
-    issue = models.ForeignKey(Issue, on_delete = models.CASCADE, related_name = 'issueComments')
+    commented_on = models.DateTimeField(auto_now=True)
+    issue = models.ForeignKey(Issue, on_delete=models.CASCADE,
+                              related_name='issueComments')
 
     def user_name(self):
         return self.user.name
 
+
 class ProjectMedia(models.Model):
-    media = models.ImageField(upload_to = 'upload_images')
-    project = models.ForeignKey(Project, on_delete=models.CASCADE, null = True, related_name='project_media')
+
+    media = models.ImageField(upload_to='upload_images')
+    project = models.ForeignKey(Project, on_delete=models.CASCADE,
+                                null=True, related_name='project_media')
+
 
 class IssueMedia(models.Model):
-    media = models.ImageField(upload_to = 'upload_images')
-    issue = models.ForeignKey(Issue, on_delete=models.CASCADE, null = True, related_name='issue_media')
+
+    media = models.ImageField(upload_to='upload_images')
+    issue = models.ForeignKey(Issue, on_delete=models.CASCADE,
+                              null=True, related_name='issue_media')
