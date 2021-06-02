@@ -39,5 +39,5 @@ six==1.14.0
 sqlparse==0.3.1
 Twisted==20.3.0
 txaio==20.4.1
-urllib3==1.25.9
+urllib3==1.26.5
 zope.interface==5.1.0
